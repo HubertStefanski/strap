@@ -1,4 +1,4 @@
-package org.hstefans.strap.view
+package org.hstefans.strap.views
 
 import tornadofx.*
 
