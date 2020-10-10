@@ -1,4 +1,4 @@
-package org.hstefans.strap.app
+package org.hstefans.strap.app.main
 
 import org.hstefans.strap.views.LoginView
 import tornadofx.*

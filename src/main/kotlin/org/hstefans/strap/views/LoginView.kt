@@ -1,18 +1,39 @@
 package org.hstefans.strap.views
 
+import javafx.scene.control.Alert
+import javafx.scene.control.TextField
 import tornadofx.*
 
-class LoginView : View() {
-    override val root = form {
-        //TODO extract values from fields to sent to auth function
-        fieldset("LoginForm") {
-            field("Username") { textfield() }
-            field("Password") { passwordfield() }
+class LoginView : View("Strap - User Login") {
+
+    var usernameField: TextField by singleAssign()
+    var passwordField: TextField by singleAssign()
+
+
+    override val root = vbox()
+
+    init {
+        with(root) {
+            //TODO extract values from fields to sent to auth function
+            label("User Login")
+            hbox {
+                label("Username")
+                usernameField = textfield()
+            }
+            hbox {
+                label("Password")
+                passwordField = passwordfield()
+            }
         }
+
         button("Login") {
             action {
-                //TODO wrap this in auth function
-                replaceWith<MainView>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.LEFT))
+                if (usernameField.text == ""|| passwordField.text == "" || (usernameField.text == "" && passwordField.text == "")){
+                    alert(Alert.AlertType.ERROR, "Authentication Error", "Username or passowrd field cannot be empty")
+                } else {
+                    replaceWith<MainView>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.LEFT))
+                }
+
             }
         }
     }
