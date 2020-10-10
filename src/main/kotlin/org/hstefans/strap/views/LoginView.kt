@@ -2,7 +2,10 @@ package org.hstefans.strap.views
 
 import javafx.scene.control.Alert
 import javafx.scene.control.TextField
+import org.hstefans.strap.app.controllers.UserController
+import org.hstefans.strap.app.utils.getJsonDataFromAsset
 import tornadofx.*
+
 
 class LoginView : View("Strap - User Login") {
 
@@ -23,8 +26,9 @@ class LoginView : View("Strap - User Login") {
             hbox {
                 label("Password")
                 passwordField = passwordfield()
+
             }
-        }
+            label(getJsonDataFromAsset("src/JSON/Users.Json").toString())        }
 
         button("Login") {
             action {
