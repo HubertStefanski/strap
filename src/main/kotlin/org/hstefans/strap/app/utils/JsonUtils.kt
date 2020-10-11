@@ -3,7 +3,7 @@ package org.hstefans.strap.app.utils
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.hstefans.strap.app.controllers.User
+import org.hstefans.strap.app.main.User
 import java.io.File
 
 

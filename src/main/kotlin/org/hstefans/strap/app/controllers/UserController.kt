@@ -8,8 +8,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.abstractj.kalium.crypto.Hash
 import org.abstractj.kalium.encoders.Encoder.HEX
+import org.hstefans.strap.app.main.User
 import tornadofx.Controller
-import java.io.BufferedReader
 import java.io.File
 import java.util.*
 
@@ -18,7 +18,7 @@ class UserController : Controller() {
 
     private val usrJsonPath = "src/JSON/Users.json"
 
-    private fun findUser(thisUsername: String): User? {
+    internal fun findUser(thisUsername: String): User? {
 
         return getAllUsersFromDataStore()?.find { user -> user.username == thisUsername }
 

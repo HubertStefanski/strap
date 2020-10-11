@@ -1,0 +1,32 @@
+{
+  "titleProperty": {
+    "name": "",
+    "value": "Do something somewhere",
+    "valid": true
+  },
+  "title": "Do something somewhere",
+  "assigneeProperty": {
+    "name": "",
+    "value": "root",
+    "valid": true
+  },
+  "assignee": "root",
+  "descriptionProperty": {
+    "name": "",
+    "value": "you know",
+    "valid": true
+  },
+  "description": "you know",
+  "locationProperty": {
+    "name": "",
+    "value": "WIT",
+    "valid": true
+  },
+  "location": "WIT",
+  "doneStatusProperty": {
+    "name": "",
+    "value": false,
+    "valid": true
+  },
+  "doneStatus": false
+}
