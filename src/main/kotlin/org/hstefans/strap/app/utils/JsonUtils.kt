@@ -7,7 +7,7 @@ import org.hstefans.strap.app.controllers.User
 import java.io.File
 
 
-fun getJsonDataFromAsset(filePath: String): List<User> {
+fun getUserDataFromAsset(filePath: String): List<User> {
     val mapper = jacksonObjectMapper()
     mapper.registerKotlinModule()
     mapper.findAndRegisterModules()

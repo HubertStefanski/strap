@@ -1,17 +1,15 @@
 package org.hstefans.strap.app.controllers
 
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleLongProperty
-import javafx.beans.property.SimpleStringProperty
-import tornadofx.*
+import kotlinx.serialization.Serializable
+import java.util.*
 
+@Serializable
+class User(uid: UUID?, username: String, password: String, phone:  Long) {
 
-class User(id: Int, username: String, password: String, phone:  Long) {
-
-    val id: Int = 0
-    val username: String = "username"
-    val password: String = "password"
-    val phone: Long = Long.MAX_VALUE
+    var uid: UUID? = uid
+    val username: String = username
+    var password: String = password
+    val phone: Long = phone
 }
 
 
