@@ -70,12 +70,11 @@ class UserController : Controller() {
 
     //Return all users from datastore, used for login authentication
     private fun getAllUsersFromDataStore(): List<User>? {
-        val usrList : MutableList<User> = mutableListOf()
+        val usrList: MutableList<User> = mutableListOf()
 
         var conn: Connection? = null
         var stmt: Statement? = null
         var rs: ResultSet? = null
-        var retRS: ResultSet? = null
 
         try {
             conn = DBC.getConnection()
@@ -89,9 +88,10 @@ class UserController : Controller() {
             var loopcntr = 1
             if (rs != null) {
                 while (rs.next()) {
-                    var uid = UUID.fromString(rs.getString("UID")) //<- Circumvent non-assignment requirement in function
+                    var uid =
+                        UUID.fromString(rs.getString("UID")) //<- Circumvent non-assignment requirement in function
                     var phone = rs.getString("PHONE").toLong() //
-                    usrList.add(User(uid,rs.getString("USERNAME"),rs.getString("PASSWORD"),phone))
+                    usrList.add(User(uid, rs.getString("USERNAME"), rs.getString("PASSWORD"), phone))
                     loopcntr++
                 }
             }
@@ -126,22 +126,35 @@ class UserController : Controller() {
 
     //Write to Json
     //TODO refactor to MYSQL, write new user
-    private fun writeToDataStore(user: User): String {
-//
-//        val gson = Gson()
-//
-//        val jsonUser: String = gson.toJson(user)
-//        File(
-//            usrJsonPath
-//        ).writeText(jsonUser)
-//
-//        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-//
-//        //Clean up the structure of the JSON before writing(improves readability for humans)
-//        val jsonPretty: String = gsonPretty.toJson(user)
-//        File(usrJsonPath).writeText(jsonPretty)
+    private fun writeToDataStore(user: User) {
+        var conn: Connection? = null
+        var stmt: Statement? = null
 
-        //Return some sort of response
-        return "Success"
+        try {
+            conn = DBC.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeUpdate("INSERT INTO USER ('UID','USERNAME','PASSWORD','PHONE') VALUES(${user.uid},${user.username},${user.password},${user.phone}) ")
+
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {qg
+                }
+            }
+        }
     }
 }
