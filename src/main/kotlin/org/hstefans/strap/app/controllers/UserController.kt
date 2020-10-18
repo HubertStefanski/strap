@@ -1,26 +1,24 @@
 package org.hstefans.strap.app.controllers
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.abstractj.kalium.crypto.Hash
 import org.abstractj.kalium.encoders.Encoder.HEX
 import org.hstefans.strap.app.main.User
 import tornadofx.Controller
-import java.io.File
+import java.sql.Connection
+import java.sql.ResultSet
+import java.sql.SQLException
+import java.sql.Statement
 import java.util.*
 
 
 class UserController : Controller() {
 
-    private val usrJsonPath = "src/JSON/Users.json"
+    val DBC = find(DBController::class)
+
 
     internal fun findUser(thisUsername: String): User? {
 
-        return getAllUsersFromDataStore()?.find { user -> user.username == thisUsername }
+        return this.getAllUsersFromDataStore()?.find { user -> user.username == thisUsername }
 
     }
 
@@ -70,38 +68,78 @@ class UserController : Controller() {
     }
 
 
-    //Return all users from Json, used for login authentication
+    //Return all users from datastore, used for login authentication
     private fun getAllUsersFromDataStore(): List<User>? {
-        val mapper = jacksonObjectMapper()
-        //Configure mapper
-        mapper.registerKotlinModule()
-        mapper.findAndRegisterModules()
-        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        val usrList : MutableList<User> = mutableListOf()
 
-        val jsonString: String = File(usrJsonPath).readText(Charsets.UTF_8)
+        var conn: Connection? = null
+        var stmt: Statement? = null
+        var rs: ResultSet? = null
+        var retRS: ResultSet? = null
 
-        return mapper.readValue(jsonString)
+        try {
+            conn = DBC.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeQuery("SELECT * FROM USER")
+            rs = stmt.resultSet
 
 
+            var loopcntr = 1
+            if (rs != null) {
+                while (rs.next()) {
+                    var uid = UUID.fromString(rs.getString("UID")) //<- Circumvent non-assignment requirement in function
+                    var phone = rs.getString("PHONE").toLong() //
+                    usrList.add(User(uid,rs.getString("USERNAME"),rs.getString("PASSWORD"),phone))
+                    loopcntr++
+                }
+            }
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            // release resources
+            if (rs != null) {
+                try {
+                    rs.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+
+        return usrList
     }
 
 
     //Write to Json
+    //TODO refactor to MYSQL, write new user
     private fun writeToDataStore(user: User): String {
-
-        val gson = Gson()
-
-        val jsonUser: String = gson.toJson(user)
-        File(
-            usrJsonPath
-        ).writeText(jsonUser)
-
-        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-
-        //Clean up the structure of the JSON before writing(improves readability for humans)
-        val jsonPretty: String = gsonPretty.toJson(user)
-        File(usrJsonPath).writeText(jsonPretty)
+//
+//        val gson = Gson()
+//
+//        val jsonUser: String = gson.toJson(user)
+//        File(
+//            usrJsonPath
+//        ).writeText(jsonUser)
+//
+//        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+//
+//        //Clean up the structure of the JSON before writing(improves readability for humans)
+//        val jsonPretty: String = gsonPretty.toJson(user)
+//        File(usrJsonPath).writeText(jsonPretty)
 
         //Return some sort of response
         return "Success"

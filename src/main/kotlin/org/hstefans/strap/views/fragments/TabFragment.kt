@@ -32,9 +32,9 @@ class TabFragment : Fragment("Tab View") {
                 }
                 borderpane()
                 {
-
-                    var tasks =
-                        maincontrlr.currentUser?.username?.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?
+                    //TODO reactivate this after refactoring to mysql
+//                    var tasks =
+//                        maincontrlr.currentUser?.username?.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?
                     left = vbox {
 
                         alignment = Pos.CENTER_RIGHT
@@ -45,14 +45,14 @@ class TabFragment : Fragment("Tab View") {
 
                     }
 
-
-                    right = tableview(tasks) {
-
-                        column("Title", Task::titleProperty)
-                        column("Description", Task::descriptionProperty)
-                        column("Location", Task::locationProperty)
-                        column("DoneStatus", Task::doneStatusProperty)
-                    }
+//                     TODO reactivate this after mysql refactor
+//                    right = tableview() {
+//
+//                        column("Title", Task::titleProperty)
+//                        column("Description", Task::descriptionProperty)
+//                        column("Location", Task::locationProperty)
+//                        column("DoneStatus", Task::doneStatusProperty)
+//                    }
                 }
             }
 

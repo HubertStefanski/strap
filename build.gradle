@@ -27,6 +27,8 @@ dependencies {
     implementation "no.tornado:tornadofx:1.7.15"
     implementation("com.fasterxml.jackson.core:jackson-databind:2.9.6")
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+"
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
+    runtime "mysql:mysql-connector-java:8.0.15"
 
 }
 
