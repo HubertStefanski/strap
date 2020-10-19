@@ -6,7 +6,10 @@ import javafx.beans.property.SimpleStringProperty
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Task(title:String,assignee: String, description: String,location :String, doneStatus: Int ) {
+class Task(uid:String,title:String,assignee: String, description: String,location :String, doneStatus: Int ) {
+    val uidProperty = SimpleStringProperty(uid)
+    var uid: String = uid
+
     val titleProperty = SimpleStringProperty(title)
     var title: String = title
 

@@ -2,6 +2,7 @@ package org.hstefans.strap.app.controllers
 
 import javafx.collections.ObservableList
 import org.hstefans.strap.app.main.Task
+import org.hstefans.strap.views.fragments.TabFragment
 import tornadofx.Controller
 import tornadofx.observableList
 import java.sql.Connection
@@ -35,6 +36,7 @@ class TaskController : Controller() {
                 while (rs.next()) {
                     taskList.add(
                         Task(
+                            rs.getString("UID"),
                             rs.getString("TITLE"),
                             rs.getString("ASSIGNEE"),
                             rs.getString("DESCRIPTION"),
@@ -84,7 +86,7 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("INSERT INTO TASK (TITLE,ASSIGNEE,DESCRIPTION,LOCATION,DONESTATUS) VALUES('${task.title}','${task.assignee}','${task.description}','${task.location}','${task.doneStatus}') ")
+            stmt!!.executeUpdate("INSERT INTO TASK (UID,TITLE,ASSIGNEE,DESCRIPTION,LOCATION,DONESTATUS) VALUES('${task.uid}','${task.title}','${task.assignee}','${task.description}','${task.location}','${task.doneStatus}') ")
 
 
         } catch (ex: SQLException) {
@@ -107,5 +109,37 @@ class TaskController : Controller() {
         }
 
         return "Success"
+    }
+
+    public fun deleteFromDataStore(task: Task) {
+        var conn: Connection? = null
+        var stmt: Statement? = null
+
+        try {
+            conn = dbc.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeUpdate("DELETE FROM `TASK` WHERE UID = '${task.uid}'")
+
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
     }
 }

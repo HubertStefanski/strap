@@ -10,6 +10,8 @@ class MainView : View("Strap - Shift Tracking") {
 
 
     override val root = vbox {
+        reloadViewsOnFocus()
+        reloadStylesheetsOnFocus()
         //TODO add functions behind menubar items
         val currentUser: String? = null
         menubar {
