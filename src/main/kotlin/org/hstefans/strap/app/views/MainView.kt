@@ -1,7 +1,7 @@
-package org.hstefans.strap.views
+package org.hstefans.strap.app.views
 
 
-import org.hstefans.strap.views.fragments.TabFragment
+import org.hstefans.strap.app.views.fragments.TabFragment
 import tornadofx.*
 import kotlin.system.exitProcess
 

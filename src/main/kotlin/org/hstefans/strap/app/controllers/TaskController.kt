@@ -2,7 +2,6 @@ package org.hstefans.strap.app.controllers
 
 import javafx.collections.ObservableList
 import org.hstefans.strap.app.main.Task
-import org.hstefans.strap.views.fragments.TabFragment
 import tornadofx.Controller
 import tornadofx.observableList
 import java.sql.Connection
@@ -77,7 +76,7 @@ class TaskController : Controller() {
 
 
     //Write to Json
-    public fun writeToDataStore(task: Task): String {
+    public fun create(task: Task): String {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -111,7 +110,40 @@ class TaskController : Controller() {
         return "Success"
     }
 
-    public fun deleteFromDataStore(task: Task) {
+    public fun update(task: Task): String {
+        var conn: Connection? = null
+        var stmt: Statement? = null
+
+        try {
+            conn = dbc.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeUpdate("UPDATE `TASK` SET `TITLE` = '${task.title}', `DESCRIPTION` = '${task.title}', LOCATION='${task.location}', DONESTATUS='${task.doneStatus}' WHERE `UID` = '${task.uid}'")
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+
+        return "Success"
+    }
+
+    public fun delete(task: Task) {
         var conn: Connection? = null
         var stmt: Statement? = null
 

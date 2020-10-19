@@ -5,20 +5,18 @@ import java.sql.*
 import java.util.*
 
 
-class DBController: Controller() {
+class DBController : Controller() {
 
     private val DBusername = "root"
     private val DBpassword = ""
 
 
-     fun getConnection(): Connection? {
-        Class.forName("com.mysql.jdbc.Driver");
+    fun getConnection(): Connection? {
         var conn: Connection? = null
         val connectionProps = Properties()
         connectionProps["user"] = DBusername
         connectionProps["password"] = DBpassword
         try {
-            Class.forName("com.mysql.jdbc.Driver")
             conn = DriverManager.getConnection(
                 "jdbc:" + "mysql" + "://" +
                         "127.0.0.1" +

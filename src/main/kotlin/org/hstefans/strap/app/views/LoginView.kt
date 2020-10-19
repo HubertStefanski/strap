@@ -1,4 +1,4 @@
-package org.hstefans.strap.views
+package org.hstefans.strap.app.views
 
 import javafx.scene.control.Alert
 import javafx.scene.control.TextField
