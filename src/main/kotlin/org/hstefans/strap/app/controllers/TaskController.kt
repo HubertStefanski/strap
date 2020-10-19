@@ -1,63 +1,111 @@
 package org.hstefans.strap.app.controllers
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import javafx.collections.ObservableList
 import org.hstefans.strap.app.main.Task
 import tornadofx.Controller
-import java.io.File
+import tornadofx.observableList
+import java.sql.Connection
+import java.sql.ResultSet
+import java.sql.SQLException
+import java.sql.Statement
 
 
 class TaskController : Controller() {
 
-    private val taskJsonPath = "src/JSON/Tasks.json"
+    val dbc = find(DBController::class)
 
 
     fun filterTasksForUser(username: String): List<Task>? {
-        println(getAllTasks())
-        return getAllTasks()?.filter { task -> task.assignee == username }
-    }
+        val taskList: ObservableList<Task> = observableList()
 
+        var conn: Connection? = null
+        var stmt: Statement? = null
+        var rs: ResultSet? = null
 
-    //Return all users from Json, used for login authentication
-    private fun getAllTasks(): List<Task>? {
-        val mapper = jacksonObjectMapper()
-        //Configure mapper
-        mapper.registerKotlinModule()
-        mapper.findAndRegisterModules()
-        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        try {
+            conn = dbc.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeQuery("SELECT * FROM TASK WHERE `ASSIGNEE` = '${username}'")
+            rs = stmt.resultSet
 
+            var loopcntr = 1
+            if (rs != null) {
+                while (rs.next()) {
+                    taskList.add(
+                        Task(
+                            rs.getString("TITLE"),
+                            rs.getString("ASSIGNEE"),
+                            rs.getString("DESCRIPTION"),
+                            rs.getString("LOCATION"),
+                            rs.getInt("DONESTATUS")
+                        )
+                    )
+                    loopcntr++
+                }
+            }
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            // release resources
+            if (rs != null) {
+                try {
+                    rs.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
 
-        val jsonString: String = File(taskJsonPath).readText(Charsets.UTF_8)
-
-        return mapper.readValue(jsonString) as ObservableList<Task>
-
-
+        return taskList
     }
 
 
     //Write to Json
     public fun writeToDataStore(task: Task): String {
+        var conn: Connection? = null
+        var stmt: Statement? = null
 
-        val gson = Gson()
+        try {
+            conn = dbc.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeUpdate("INSERT INTO TASK (TITLE,ASSIGNEE,DESCRIPTION,LOCATION,DONESTATUS) VALUES('${task.title}','${task.assignee}','${task.description}','${task.location}','${task.doneStatus}') ")
 
-        val jsonUser: String = gson.toJson(task)
-        File(
-            taskJsonPath
-        ).writeText(jsonUser)
 
-        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
 
-        //Clean up the structure of the JSON before writing(improves readability for humans)
-        val jsonPretty: String = gsonPretty.toJson(task)
-        File(taskJsonPath).writeText(jsonPretty)
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
 
-        //Return some sort of response
         return "Success"
     }
 }

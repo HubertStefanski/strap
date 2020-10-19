@@ -13,7 +13,7 @@ import java.util.*
 
 class UserController : Controller() {
 
-    val DBC = find(DBController::class)
+    val dbc = find(DBController::class)
 
 
     internal fun findUser(thisUsername: String): User? {
@@ -77,7 +77,7 @@ class UserController : Controller() {
         var rs: ResultSet? = null
 
         try {
-            conn = DBC.getConnection()
+            conn = dbc.getConnection()
             if (conn != null) {
                 stmt = conn.createStatement()
             }
@@ -131,7 +131,7 @@ class UserController : Controller() {
         var stmt: Statement? = null
 
         try {
-            conn = DBC.getConnection()
+            conn = dbc.getConnection()
             if (conn != null) {
                 stmt = conn.createStatement()
             }
@@ -152,7 +152,7 @@ class UserController : Controller() {
             if (conn != null) {
                 try {
                     conn.close()
-                } catch (sqlEx: SQLException) {qg
+                } catch (sqlEx: SQLException) {
                 }
             }
         }
