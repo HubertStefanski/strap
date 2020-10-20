@@ -10,17 +10,17 @@ import javafx.scene.text.FontWeight
 import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.main.Task
+import org.hstefans.strap.app.views.TaskUpdateView
 import tornadofx.*
-import tornadofx.Stylesheet.Companion.contextMenu
 import java.util.*
 
+var selectedTask = Task("", "null", "null", "null", "null", 0)
 
 class TabFragment : Fragment("Tab View") {
 
     val taskTableData: ObservableList<Task> = FXCollections.observableArrayList()
     private val taskcntrlr = TaskController()
     private val maincontrlr = MainController()
-    var selectedTask = Task("", "null", "null", "null", "null", 0)
 
     //TODO remove this after testing
     private val testTask = Task("testuid", "Do something somewhere", "root", "you know", "WIT", 0)
@@ -119,7 +119,7 @@ class TabFragment : Fragment("Tab View") {
                             }
 
                             Class.forName("javafx.scene.control.SkinBase");
-                            right = tableview(taskTableData) {
+                            center = tableview(taskTableData) {
                                 column("UID", Task::uidProperty)
                                 column("Title", Task::titleProperty)
                                 column("Description", Task::descriptionProperty)
@@ -137,11 +137,27 @@ class TabFragment : Fragment("Tab View") {
 
                                 }
 
-                                contextmenu{
-                                    item("update"){
-
+                                contextmenu {
+                                    item("update") {
+                                        action {
+                                            if (selectedTask.uid != "") {
+                                                replaceWith<TaskUpdateView>(
+                                                    ViewTransition.Slide(
+                                                        0.3.seconds,
+                                                        ViewTransition.Direction.LEFT
+                                                    ), true, true
+                                                )
+                                            } else {
+                                                alert(
+                                                    Alert.AlertType.ERROR,
+                                                    "No task has been selected",
+                                                    "Can't proceed, no task has been selected, try again"
+                                                )
+                                            }
+                                        }
                                     }
-                                    item("toggle done"){
+
+                                    item("toggle done") {
                                         action {
                                             var doneFlag: Int = 1;
                                             if (selectedTask.doneStatus == 1) { //flip status
@@ -162,7 +178,7 @@ class TabFragment : Fragment("Tab View") {
                                             alert(
                                                 Alert.AlertType.INFORMATION,
                                                 "Task Status Toggled",
-                                                "Task status has been changed to ${doneFlag}}"
+                                                "Task status has been changed to ${doneFlag}"
                                             )
                                             taskTableData.setAll(maincontrlr.currentUser?.username?.let {
                                                 taskcntrlr.filterTasksForUser(
@@ -172,7 +188,7 @@ class TabFragment : Fragment("Tab View") {
 
                                         }
                                     }
-                                    item("remove"){
+                                    item("remove") {
                                         action {
                                             if (selectedTask.uid == "") {
                                                 alert(
