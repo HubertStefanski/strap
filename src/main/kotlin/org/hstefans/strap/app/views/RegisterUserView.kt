@@ -1,11 +1,10 @@
 package org.hstefans.strap.app.views;
 
 import javafx.scene.control.Alert
-import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
 import org.hstefans.strap.app.controllers.UserController
-import org.hstefans.strap.app.main.User
+import org.hstefans.strap.app.models.User
 import tornadofx.*
 
 class RegisterUserView : View("Register User") {

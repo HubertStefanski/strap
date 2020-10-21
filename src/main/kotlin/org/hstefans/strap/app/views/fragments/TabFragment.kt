@@ -10,7 +10,7 @@ import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
 import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
-import org.hstefans.strap.app.main.Task
+import org.hstefans.strap.app.models.Task
 import org.hstefans.strap.app.views.TaskUpdateView
 import tornadofx.*
 import java.util.*

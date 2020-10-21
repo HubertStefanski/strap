@@ -4,7 +4,7 @@ package org.hstefans.strap.app.views
 import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.UserController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
-import org.hstefans.strap.app.main.User
+import org.hstefans.strap.app.models.User
 import org.hstefans.strap.app.views.fragments.TabFragment
 import tornadofx.*
 import kotlin.system.exitProcess
