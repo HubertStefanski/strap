@@ -1,7 +1,7 @@
 package org.hstefans.strap.app.controllers
 
 import javafx.collections.ObservableList
-import org.hstefans.strap.app.models.Task
+import org.hstefans.strap.app.models.Report
 import tornadofx.Controller
 import tornadofx.observableList
 import java.sql.Connection
@@ -10,13 +10,13 @@ import java.sql.SQLException
 import java.sql.Statement
 
 
-class TaskController : Controller() {
+class ReportController : Controller() {
 
     val dbc = find(DBController::class)
 
 
-    fun filterTasksForUser(username: String): List<Task>? {
-        val taskList: ObservableList<Task> = observableList()
+    fun filterReportsForUser(username: String): ObservableList<Report> {
+        val reportList: ObservableList<Report> = observableList()
 
         var conn: Connection? = null
         var stmt: Statement? = null
@@ -27,20 +27,20 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeQuery("SELECT * FROM TASK WHERE `ASSIGNEE` = '${username}'")
+            stmt!!.executeQuery("SELECT * FROM REPORT WHERE `REPORTEE` = '${username}'")
             rs = stmt.resultSet
 
             var loopcntr = 1
             if (rs != null) {
                 while (rs.next()) {
-                    taskList.add(
-                        Task(
+                    reportList.add(
+                        Report(
                             rs.getString("UID"),
-                            rs.getString("TITLE"),
-                            rs.getString("ASSIGNEE"),
-                            rs.getString("DESCRIPTION"),
                             rs.getString("LOCATION"),
-                            rs.getInt("DONESTATUS")
+                            rs.getString("DESCRIPTION"),
+                            rs.getString("DAMAGE"),
+                            rs.getString("RESOLUTION"),
+                            rs.getString("REPORTEE")
                         )
                     )
                     loopcntr++
@@ -71,12 +71,12 @@ class TaskController : Controller() {
             }
         }
 
-        return taskList
+        return reportList
     }
 
 
     //Write to Json
-    public fun create(task: Task): String {
+    public fun create(report: Report): String {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -85,7 +85,7 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("INSERT INTO TASK (UID,TITLE,ASSIGNEE,DESCRIPTION,LOCATION,DONESTATUS) VALUES('${task.uid}','${task.title}','${task.assignee}','${task.description}','${task.location}','${task.doneStatus}') ")
+            stmt!!.executeUpdate("INSERT INTO REPORT (UID,LOCATION,DESCRIPTION,DAMAGE,RESOLUTION,REPORTEE) VALUES('${report.uid}','${report.location}','${report.description}','${report.damage}','${report.resolution}','${report.reportee}') ")
 
 
         } catch (ex: SQLException) {
@@ -110,7 +110,7 @@ class TaskController : Controller() {
         return "Success"
     }
 
-    public fun update(task: Task): String {
+    public fun update(report: Report): String {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -119,7 +119,7 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("UPDATE `TASK` SET `TITLE` = '${task.title}', `DESCRIPTION` = '${task.title}', LOCATION='${task.location}', DONESTATUS='${task.doneStatus}' WHERE UID = '${task.uid}'")
+            stmt!!.executeUpdate("UPDATE `REPORT` SET `LOCATION` = '${report.location}', `DESCRIPTION` = '${report.description}', RESOLUTION='${report.resolution}', REPORTEE='${report.reportee}' WHERE UID = '${report.uid}'")
 
         } catch (ex: SQLException) {
             // handle any errors
@@ -143,7 +143,7 @@ class TaskController : Controller() {
         return "Success"
     }
 
-    public fun delete(task: Task) {
+    public fun delete(report: Report) {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -152,7 +152,7 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("DELETE FROM `TASK` WHERE UID = '${task.uid}'")
+            stmt!!.executeUpdate("DELETE FROM `REPORT` WHERE UID = '${report.uid}'")
 
 
         } catch (ex: SQLException) {

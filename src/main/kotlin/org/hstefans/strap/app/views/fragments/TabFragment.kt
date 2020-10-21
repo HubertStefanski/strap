@@ -6,34 +6,44 @@ import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY
+import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
+import org.hstefans.strap.app.controllers.ReportController
 import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
-import org.hstefans.strap.app.main.Task
+import org.hstefans.strap.app.models.Report
+import org.hstefans.strap.app.models.Task
 import org.hstefans.strap.app.views.TaskUpdateView
 import tornadofx.*
 import java.util.*
 
 var selectedTask = Task("", "null", "null", "null", "null", 0)
+var selectedReport = Report("", "null", "null", "null", "null", "null")
 
 class TabFragment : Fragment("Tab View") {
 
     val taskTableData: ObservableList<Task> = FXCollections.observableArrayList()
+    val reportTableData: ObservableList<Report> = FXCollections.observableArrayList()
+
     private val taskcntrlr = TaskController()
+    private val reportcntrlr = ReportController()
 
 
     //TODO remove this after testing
     private val testTask = Task("testuid", "Do something somewhere", "root", "you know", "WIT", 0)
+    private val testReport = Report("testuid", "somewhere", "brokenstuff", "none", "sellotape", "root")
 
     override val root = vbox {
 
 
-        reloadViewsOnFocus ()
+        reloadViewsOnFocus()
         //TODO remove after testing
         taskcntrlr.create(testTask)
+        reportcntrlr.create(testReport)
 
         taskTableData.setAll(currentUser.username.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?)
+        reportTableData.setAll(currentUser.username.let { reportcntrlr.filterReportsForUser(it) } as ObservableList<Report>?)
 
 
         tabpane {
@@ -41,6 +51,10 @@ class TabFragment : Fragment("Tab View") {
             var taskDescriptionField: TextField by singleAssign()
             var taskLocationField: TextField by singleAssign()
 
+            var reportLocationField: TextField by singleAssign()
+            var reportDescriptionField: TextArea by singleAssign()
+            var reportDamageField: TextField by singleAssign()
+            var reportResolutionField: TextField by singleAssign()
 
             tabClosingPolicy =
                 TabPane.TabClosingPolicy.UNAVAILABLE //Stop the users from closing tabs, stops displaying exit option on tab
@@ -241,12 +255,125 @@ class TabFragment : Fragment("Tab View") {
                     tab("Events/Reports") {
                         borderpane() {
                             left = vbox {
-                                button("report event")
-                                button("edit event")
-                                button("remove event")
-                            }
-                            //TODO change type to taskObject
-                            right = textarea {
+                                label("Reports")
+
+                                label("Event Location")
+                                reportLocationField = textfield()
+
+                                label("Event Description")
+                                reportDescriptionField = textarea()
+
+                                label("Event Damage")
+                                reportDamageField = textfield()
+
+                                label("Event Resolution")
+                                reportResolutionField = textfield()
+
+                                button("Report Event") {
+                                    action {
+                                        var newReport = Report(
+                                            UUID.randomUUID().toString(),
+                                            reportLocationField.text,
+                                            reportDescriptionField.text,
+                                            reportDamageField.text,
+                                            reportResolutionField.text,
+                                            currentUser.username
+                                        )
+                                        if (newReport.location == "" || newReport.description == "" || newReport.damage == "") {
+                                            alert(
+                                                Alert.AlertType.ERROR,
+                                                "Empty Field",
+                                                "Could not create new task, some fields are empty, please fill them in"
+                                            )
+                                        } else {
+                                            reportcntrlr.create(newReport)
+                                            alert(
+                                                Alert.AlertType.INFORMATION,
+                                                "Task report",
+                                                "A new report has been created ${newReport.location}"
+                                            )
+                                            reportTableData.setAll(currentUser.username.let {
+                                                reportcntrlr.filterReportsForUser(
+                                                    it
+                                                )
+                                            } as ObservableList<Report>?)
+                                            reportLocationField.text("")
+                                            reportDescriptionField.text("")
+                                            reportDamageField.text("")
+                                            reportResolutionField.text("")
+
+                                        }
+                                    }
+                                }
+                                //TODO change type to taskObject
+                                center = tableview(reportTableData) {
+                                    column("UID", Report::uidProperty)
+                                    column("Location", Report::locationProperty)
+                                    column("Description", Report::descriptionProperty)
+                                    column("Damage", Report::damageProperty)
+                                    column("Resolution", Report::resolutionProperty)
+
+
+                                    onUserSelect(1) { report ->
+                                        selectedReport = Report(
+                                            report.uid,
+                                            report.location,
+                                            report.description,
+                                            report.damage,
+                                            report.resolution,
+                                            report.reportee,
+                                        )
+                                        columnResizePolicy = CONSTRAINED_RESIZE_POLICY
+
+                                    }
+
+
+                                    contextmenu {
+                                        item("update") {
+                                            action {
+                                                if (selectedTask.uid != "") {
+                                                    replaceWith<TaskUpdateView>(
+                                                        ViewTransition.Slide(
+                                                            0.3.seconds,
+                                                            ViewTransition.Direction.LEFT
+                                                        ), true, true
+                                                    )
+                                                } else {
+                                                    alert(
+                                                        Alert.AlertType.ERROR,
+                                                        "No report has been selected",
+                                                        "Can't proceed, no report has been selected, try again"
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        item("remove") {
+                                            action {
+                                                if (selectedReport.uid == "") {
+                                                    alert(
+                                                        Alert.AlertType.ERROR,
+                                                        "Report Selection Error",
+                                                        "No report has been selected, please try again"
+                                                    )
+                                                } else if (selectedReport.uid != "" || selectedReport.reportee != "null") {
+                                                    reportcntrlr.delete(selectedReport);
+                                                    alert(
+                                                        Alert.AlertType.INFORMATION,
+                                                        "Report Deleted",
+                                                        "Report ${selectedReport.uid} has been deleted"
+                                                    )
+                                                    reportTableData.setAll(currentUser.username.let {
+                                                        reportcntrlr.filterReportsForUser(
+                                                            it
+                                                        )
+                                                    } as ObservableList<Report>?)
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
                             }
                         }
                     }

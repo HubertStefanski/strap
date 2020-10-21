@@ -1,4 +1,4 @@
-package org.hstefans.strap.app.main
+package org.hstefans.strap.app.models
 
 import kotlinx.serialization.Serializable
 import java.util.*

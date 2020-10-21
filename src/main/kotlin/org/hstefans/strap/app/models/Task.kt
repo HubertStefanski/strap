@@ -1,27 +1,23 @@
-package org.hstefans.strap.app.main
+package org.hstefans.strap.app.models
 
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Task(uid:String,title:String,assignee: String, description: String,location :String, doneStatus: Int ) {
+class Task(
+    var uid: String, var title: String, var assignee: String,
+    var description: String, var location: String, var doneStatus: Int
+) {
     val uidProperty = SimpleStringProperty(uid)
-    var uid: String = uid
 
     val titleProperty = SimpleStringProperty(title)
-    var title: String = title
 
     var assigneeProperty = SimpleStringProperty(assignee)
-    var assignee: String = assignee
 
     val descriptionProperty = SimpleStringProperty(description)
-    var description: String = description
 
     val locationProperty = SimpleStringProperty(location)
-    var location: String = location
 
     val doneStatusProperty = SimpleIntegerProperty(doneStatus)
-    var doneStatus:Int = doneStatus
 }

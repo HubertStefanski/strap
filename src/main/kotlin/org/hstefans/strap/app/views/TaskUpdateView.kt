@@ -7,7 +7,7 @@ import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.controllers.UserController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
-import org.hstefans.strap.app.main.Task
+import org.hstefans.strap.app.models.Task
 import org.hstefans.strap.app.views.fragments.TabFragment
 import org.hstefans.strap.app.views.fragments.selectedTask
 import tornadofx.*

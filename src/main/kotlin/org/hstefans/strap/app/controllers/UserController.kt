@@ -3,7 +3,7 @@ package org.hstefans.strap.app.controllers
 import javafx.scene.control.Alert
 import org.abstractj.kalium.crypto.Hash
 import org.abstractj.kalium.encoders.Encoder.HEX
-import org.hstefans.strap.app.main.User
+import org.hstefans.strap.app.models.User
 import tornadofx.Controller
 import tornadofx.alert
 import java.sql.Connection
