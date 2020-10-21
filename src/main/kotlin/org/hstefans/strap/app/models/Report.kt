@@ -5,12 +5,19 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-class Report(var uid: String, location: String, description: String, damage: String, resolution: String, reportee: String) {
+class Report(
+    var uid: String,
+    location: String,
+    description: String,
+    damage: String,
+    resolution: String,
+    reportee: String
+) {
 
     val uidProperty = SimpleStringProperty(uid)
 
-    val locationProperty = SimpleStringProperty(uid)
-    var location = SimpleStringProperty(uid)
+    val locationProperty = SimpleStringProperty(location)
+    var location: String = location
 
     val descriptionProperty = SimpleStringProperty(description)
     var description: String = description
@@ -21,7 +28,7 @@ class Report(var uid: String, location: String, description: String, damage: Str
     val resolutionProperty = SimpleStringProperty(resolution)
     var resolution = resolution
 
-    val reporteePropert = SimpleStringProperty(description)
+    val reporteeProperty = SimpleStringProperty(description)
     var reportee: String = reportee
 
 

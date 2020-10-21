@@ -2,7 +2,6 @@ package org.hstefans.strap.app.controllers
 
 import javafx.collections.ObservableList
 import org.hstefans.strap.app.models.Report
-import org.hstefans.strap.app.models.Task
 import tornadofx.Controller
 import tornadofx.observableList
 import java.sql.Connection
