@@ -5,10 +5,11 @@ import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.control.TabPane
+import javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY
 import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
-import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.TaskController
+import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import org.hstefans.strap.app.main.Task
 import org.hstefans.strap.app.views.TaskUpdateView
 import tornadofx.*
@@ -20,17 +21,20 @@ class TabFragment : Fragment("Tab View") {
 
     val taskTableData: ObservableList<Task> = FXCollections.observableArrayList()
     private val taskcntrlr = TaskController()
-    private val maincontrlr = MainController()
+
 
     //TODO remove this after testing
     private val testTask = Task("testuid", "Do something somewhere", "root", "you know", "WIT", 0)
 
     override val root = vbox {
-        reloadViewsOnFocus()
+
+
+        reloadViewsOnFocus ()
         //TODO remove after testing
         taskcntrlr.create(testTask)
 
-        taskTableData.setAll(maincontrlr.currentUser?.username?.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?)
+        taskTableData.setAll(currentUser.username.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?)
+
 
         tabpane {
             var taskTitleField: TextField by singleAssign()
@@ -69,40 +73,36 @@ class TabFragment : Fragment("Tab View") {
                         }
                         button("create new task") {
                             action {
-                                var newTask = maincontrlr.currentUser?.username?.let {
-                                    Task(
-                                        UUID.randomUUID().toString(),
-                                        taskTitleField.text,
-                                        it,
-                                        taskDescriptionField.text,
-                                        taskLocationField.text,
-                                        0
+                                var newTask = Task(
+                                    UUID.randomUUID().toString(),
+                                    taskTitleField.text,
+                                    currentUser.username,
+                                    taskDescriptionField.text,
+                                    taskLocationField.text,
+                                    0
+                                )
+                                if (newTask.title == "" || newTask.description == "" || newTask.location == "") {
+                                    alert(
+                                        Alert.AlertType.ERROR,
+                                        "Empty Field",
+                                        "Could not create new task, some fields are empty, please fill them in"
                                     )
-                                }
-                                if (newTask != null) {
-                                    if (newTask.title == "" || newTask.description == "" || newTask.location == "") {
-                                        alert(
-                                            Alert.AlertType.ERROR,
-                                            "Empty Field",
-                                            "Could not create new task, some fields are empty, please fill them in"
+                                } else {
+                                    taskcntrlr.create(newTask)
+                                    alert(
+                                        Alert.AlertType.INFORMATION,
+                                        "Task Created",
+                                        "A new task has been created ${newTask.title}"
+                                    )
+                                    taskTableData.setAll(currentUser.username.let {
+                                        taskcntrlr.filterTasksForUser(
+                                            it
                                         )
-                                    } else {
-                                        taskcntrlr.create(newTask)
-                                        alert(
-                                            Alert.AlertType.INFORMATION,
-                                            "Task Created",
-                                            "A new task has been created ${newTask.title}"
-                                        )
-                                        taskTableData.setAll(maincontrlr.currentUser?.username?.let {
-                                            taskcntrlr.filterTasksForUser(
-                                                it
-                                            )
-                                        } as ObservableList<Task>?)
-                                        taskTitleField.text("")
-                                        taskDescriptionField.text("")
-                                        taskLocationField.text("")
+                                    } as ObservableList<Task>?)
+                                    taskTitleField.text("")
+                                    taskDescriptionField.text("")
+                                    taskLocationField.text("")
 
-                                    }
                                 }
                             }
                         }
@@ -111,7 +111,7 @@ class TabFragment : Fragment("Tab View") {
                             alignment = Pos.BOTTOM_CENTER
                             button("REFRESH").action {
                                 // force a refresh on the table
-                                taskTableData.setAll(maincontrlr.currentUser?.username?.let {
+                                taskTableData.setAll(currentUser.username.let {
                                     taskcntrlr.filterTasksForUser(
                                         it
                                     )
@@ -125,6 +125,8 @@ class TabFragment : Fragment("Tab View") {
                                 column("Description", Task::descriptionProperty)
                                 column("Location", Task::locationProperty)
                                 column("DoneStatus", Task::doneStatusProperty)
+
+
                                 onUserSelect(1) { task ->
                                     selectedTask = Task(
                                         task.uid,
@@ -132,10 +134,12 @@ class TabFragment : Fragment("Tab View") {
                                         task.assignee,
                                         task.description,
                                         task.location,
-                                        task.doneStatus
+                                        task.doneStatus,
                                     )
+                                    columnResizePolicy = CONSTRAINED_RESIZE_POLICY
 
                                 }
+
 
                                 contextmenu {
                                     item("update") {
@@ -167,7 +171,7 @@ class TabFragment : Fragment("Tab View") {
                                                 Task(
                                                     selectedTask.uid,
                                                     selectedTask.title,
-                                                    maincontrlr.currentUser?.username.toString(),
+                                                    currentUser.username,
                                                     selectedTask.description,
                                                     selectedTask.location,
                                                     doneFlag
@@ -178,9 +182,9 @@ class TabFragment : Fragment("Tab View") {
                                             alert(
                                                 Alert.AlertType.INFORMATION,
                                                 "Task Status Toggled",
-                                                "Task status has been changed to ${doneFlag}"
+                                                "Task status has been changed to $doneFlag"
                                             )
-                                            taskTableData.setAll(maincontrlr.currentUser?.username?.let {
+                                            taskTableData.setAll(currentUser.username.let {
                                                 taskcntrlr.filterTasksForUser(
                                                     it
                                                 )
@@ -203,7 +207,7 @@ class TabFragment : Fragment("Tab View") {
                                                     "Task Deleted",
                                                     "Task ${selectedTask.title} has been deleted"
                                                 )
-                                                taskTableData.setAll(maincontrlr.currentUser?.username?.let {
+                                                taskTableData.setAll(currentUser.username.let {
                                                     taskcntrlr.filterTasksForUser(
                                                         it
                                                     )
@@ -251,4 +255,5 @@ class TabFragment : Fragment("Tab View") {
         }
     }
 }
+
 

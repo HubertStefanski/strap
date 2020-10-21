@@ -1,11 +1,7 @@
 package org.hstefans.strap.app.Style
 
-import javafx.beans.property.SimpleObjectProperty
-import tornadofx.*
+import tornadofx.Stylesheet
 
 
-//TODO
 class Style : Stylesheet() {
-
-
 }

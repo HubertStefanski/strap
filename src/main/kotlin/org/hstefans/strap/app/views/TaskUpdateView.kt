@@ -5,6 +5,8 @@ import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
 import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.TaskController
+import org.hstefans.strap.app.controllers.UserController
+import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import org.hstefans.strap.app.main.Task
 import org.hstefans.strap.app.views.fragments.TabFragment
 import org.hstefans.strap.app.views.fragments.selectedTask
@@ -16,6 +18,7 @@ class TaskUpdateView : View("Task Update") {
     var taskLocationField: TextField by singleAssign()
     private val taskcntrlr = TaskController()
     private val maincontrlr = MainController()
+    private val usrcontrlr = UserController()
 
     override val root = vbox {
         label("Tasks")
@@ -49,11 +52,11 @@ class TaskUpdateView : View("Task Update") {
             button {
                 label("Update Task")
                 action {
-                    var newTask =
+                    val newTask =
                         Task(
                             selectedTask.uid,
                             taskTitleField.text,
-                            maincontrlr.currentUser?.username.toString(),
+                            currentUser.username,
                             taskDescriptionField.text,
                             taskLocationField.text,
                             selectedTask.doneStatus

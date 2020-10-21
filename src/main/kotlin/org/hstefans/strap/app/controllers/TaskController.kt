@@ -119,7 +119,7 @@ class TaskController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("UPDATE `TASK` SET `TITLE` = '${task.title}', `DESCRIPTION` = '${task.title}', LOCATION='${task.location}', DONESTATUS='${task.doneStatus}' WHERE `UID` = '${task.uid}'")
+            stmt!!.executeUpdate("UPDATE `TASK` SET `TITLE` = '${task.title}', `DESCRIPTION` = '${task.title}', LOCATION='${task.location}', DONESTATUS='${task.doneStatus}' WHERE UID = '${task.uid}'")
 
         } catch (ex: SQLException) {
             // handle any errors

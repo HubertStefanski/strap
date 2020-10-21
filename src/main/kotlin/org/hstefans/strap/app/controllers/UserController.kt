@@ -1,9 +1,11 @@
 package org.hstefans.strap.app.controllers
 
+import javafx.scene.control.Alert
 import org.abstractj.kalium.crypto.Hash
 import org.abstractj.kalium.encoders.Encoder.HEX
 import org.hstefans.strap.app.main.User
 import tornadofx.Controller
+import tornadofx.alert
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -11,7 +13,14 @@ import java.sql.Statement
 import java.util.*
 
 
+
+
 class UserController : Controller() {
+
+    companion object{
+        var currentUser: User = User(null,"","",0)
+
+    }
 
     val dbc = find(DBController::class)
 
@@ -43,11 +52,20 @@ class UserController : Controller() {
 
         user.uid = UUID.randomUUID()
         //Check if uid already exists in userDB, unlikely but possible
+
         genUid@ for (knownUser in knownUsers!!) {
             if (knownUser.uid == user.uid) {
                 user.uid = UUID.randomUUID()
                 continue@genUid
-            } else {
+            }
+            if (knownUser.username.toUpperCase() == user.username.toUpperCase() || knownUser.phone == user.phone) {
+                alert(
+                    Alert.AlertType.ERROR,
+                    "Unable to register user",
+                    "Username or Phone number is already registered"
+                )
+            }
+            else {
                 break
             }
         }
@@ -59,7 +77,7 @@ class UserController : Controller() {
     }
 
     //Helper function for password hashing, more secure than plaintext
-    private fun hashString(instring: String): String {
+    public fun hashString(instring: String): String {
 
         val hash = Hash()
         val data: String = instring
@@ -135,7 +153,7 @@ class UserController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("INSERT INTO USER ('UID','USERNAME','PASSWORD','PHONE') VALUES(${user.uid},${user.username},${user.password},${user.phone}) ")
+            stmt!!.executeUpdate("INSERT INTO USER (UID,USERNAME,PASSWORD,PHONE) VALUES('${user.uid}','${user.username}','${user.password}','${user.phone}')")
 
 
         } catch (ex: SQLException) {
