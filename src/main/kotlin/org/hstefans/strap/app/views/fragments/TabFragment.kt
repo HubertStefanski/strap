@@ -305,7 +305,6 @@ class TabFragment : Fragment("Tab View") {
                                         }
                                     }
                                 }
-                                //TODO change type to taskObject
                                 center = tableview(reportTableData) {
                                     column("UID", Report::uidProperty)
                                     column("Location", Report::locationProperty)
@@ -324,6 +323,7 @@ class TabFragment : Fragment("Tab View") {
                                             report.reportee,
                                         )
                                         columnResizePolicy = CONSTRAINED_RESIZE_POLICY
+
 
                                     }
 

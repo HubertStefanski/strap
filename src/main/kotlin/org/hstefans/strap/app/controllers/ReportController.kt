@@ -119,7 +119,7 @@ class ReportController : Controller() {
             if (conn != null) {
                 stmt = conn.createStatement()
             }
-            stmt!!.executeUpdate("UPDATE `REPORT` SET `LOCATION` = '${report.location}', `DESCRIPTION` = '${report.description}', RESOLUTION='${report.resolution}', REPORTEE='${report.reportee}' WHERE UID = '${report.uid}'")
+            stmt!!.executeUpdate("UPDATE REPORT SET LOCATION = '${report.location}', DESCRIPTION = '${report.description}', DAMAGE = '${report.damage}', RESOLUTION='${report.resolution}', REPORTEE='${report.reportee}' WHERE UID = '${report.uid}'")
 
         } catch (ex: SQLException) {
             // handle any errors
