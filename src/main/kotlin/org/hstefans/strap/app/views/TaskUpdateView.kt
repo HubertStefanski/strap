@@ -3,9 +3,7 @@ package org.hstefans.strap.app.views
 import javafx.scene.control.Alert
 import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
-import org.hstefans.strap.app.controllers.MainController
 import org.hstefans.strap.app.controllers.TaskController
-import org.hstefans.strap.app.controllers.UserController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import org.hstefans.strap.app.models.Task
 import org.hstefans.strap.app.views.fragments.TabFragment
@@ -13,12 +11,10 @@ import org.hstefans.strap.app.views.fragments.selectedTask
 import tornadofx.*
 
 class TaskUpdateView : View("Task Update") {
-    var taskTitleField: TextField by singleAssign()
-    var taskDescriptionField: TextField by singleAssign()
-    var taskLocationField: TextField by singleAssign()
-    private val taskcntrlr = TaskController()
-    private val maincontrlr = MainController()
-    private val usrcontrlr = UserController()
+    private var taskTitleField: TextField by singleAssign()
+    private var taskDescriptionField: TextField by singleAssign()
+    private var taskLocationField: TextField by singleAssign()
+    private val taskController = TaskController()
 
     override val root = vbox {
         label("Tasks")
@@ -62,12 +58,19 @@ class TaskUpdateView : View("Task Update") {
                             selectedTask.doneStatus
                         )
 
-                    taskcntrlr.update(newTask)
+                    taskController.update(newTask)
                     alert(
                         Alert.AlertType.INFORMATION,
                         "Task Updated",
                         "The selected task has been updated"
                     )
+                    replaceWith<TabFragment>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),true, true)
+
+                }
+            }
+            button {
+                label("return to tasks")
+                action {
                     replaceWith<TabFragment>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),true, true)
 
                 }

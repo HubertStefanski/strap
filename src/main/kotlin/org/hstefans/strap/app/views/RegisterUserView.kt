@@ -9,12 +9,12 @@ import tornadofx.*
 
 class RegisterUserView : View("Register User") {
 
-    val usrcntrlr = UserController()
+    private val userController = UserController()
 
-    var usernameTextField: TextField by singleAssign()
-    var passwordTextField: TextField by singleAssign()
-    var passwordConfirmTextField: TextField by singleAssign()
-    var phoneTextField: TextField by singleAssign()
+    private var usernameTextField: TextField by singleAssign()
+    private var passwordTextField: TextField by singleAssign()
+    private var passwordConfirmTextField: TextField by singleAssign()
+    private var phoneTextField: TextField by singleAssign()
 
     override val root = borderpane() {
         label("Registration")
@@ -57,11 +57,20 @@ class RegisterUserView : View("Register User") {
         left = button {
             label("Register User")
             action {
-                if (usrcntrlr.hashString(passwordTextField.text) == usrcntrlr.hashString(passwordConfirmTextField.text)) {
-                    var newUser =
+                if (userController.hashString(passwordTextField.text) == userController.hashString(passwordConfirmTextField.text)) {
+                    if (phoneTextField.text.length > 9){
+                        alert(
+                            Alert.AlertType.ERROR,
+                            "Too many digits in phone number",
+                            "user cannot be registered "
+                        )
+
+                    }
+
+                    val newUser =
                         User(null, usernameTextField.text, passwordTextField.text, phoneTextField.text.toLong())
 
-                    usrcntrlr.addUser(newUser)
+                    userController.addUser(newUser)
                     alert(
                         Alert.AlertType.INFORMATION,
                         "user Registration successful",

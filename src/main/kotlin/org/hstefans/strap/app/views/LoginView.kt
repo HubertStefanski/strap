@@ -3,30 +3,20 @@ package org.hstefans.strap.app.views
 import javafx.scene.control.Alert
 import javafx.scene.control.TextField
 import javafx.scene.text.FontWeight
-import org.hstefans.strap.app.controllers.MainController
-import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.controllers.UserController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import tornadofx.*
 
 
 class LoginView : View("Strap - User Login") {
-    val usrcntrlr = UserController()
-    val taskcntrlr = TaskController()
-    val maincntrlr = MainController()
-
+    val userController = UserController()
 
     var usernameField: TextField by singleAssign()
     var passwordField: TextField by singleAssign()
-    //TODO remove this, used for testing
-//    val testUser = User(null, "root", "root", 0)
-
 
     override val root = borderpane()
 
     init {
-        //TODO remove this, used for testing
-        //        usrcntrl.addUser(testUser)
         with(root) {
             top = vbox {
                 label("User Login")
@@ -58,8 +48,8 @@ class LoginView : View("Strap - User Login") {
                             "Username or password field cannot be empty"
                         )
                     }
-                    if (usrcntrlr.authUser(usernameField.text, passwordField.text)) {
-                        currentUser = usrcntrlr.findUser(usernameField.text)!!
+                    if (userController.authUser(usernameField.text, passwordField.text)) {
+                        currentUser = userController.findUser(usernameField.text)!!
                         replaceWith<MainView>(
                             ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),
                             true,

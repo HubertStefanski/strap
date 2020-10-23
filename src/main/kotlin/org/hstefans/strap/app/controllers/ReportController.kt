@@ -12,7 +12,7 @@ import java.sql.Statement
 
 class ReportController : Controller() {
 
-    val dbc = find(DBController::class)
+    private val dbc = find(DBController::class)
 
 
     fun filterReportsForUser(username: String): ObservableList<Report> {
@@ -76,7 +76,7 @@ class ReportController : Controller() {
 
 
     //Write to Json
-    public fun create(report: Report): String {
+    fun create(report: Report): String {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -110,7 +110,7 @@ class ReportController : Controller() {
         return "Success"
     }
 
-    public fun update(report: Report): String {
+    fun update(report: Report): String {
         var conn: Connection? = null
         var stmt: Statement? = null
 
@@ -143,7 +143,7 @@ class ReportController : Controller() {
         return "Success"
     }
 
-    public fun delete(report: Report) {
+    fun delete(report: Report) {
         var conn: Connection? = null
         var stmt: Statement? = null
 

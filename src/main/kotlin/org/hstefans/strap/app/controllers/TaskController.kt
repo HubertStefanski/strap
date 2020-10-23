@@ -12,7 +12,7 @@ import java.sql.Statement
 
 class TaskController : Controller() {
 
-    val dbc = find(DBController::class)
+    private val dbc = find(DBController::class)
 
 
     fun filterTasksForUser(username: String): List<Task>? {

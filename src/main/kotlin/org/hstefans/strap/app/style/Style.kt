@@ -1,4 +1,4 @@
-package org.hstefans.strap.app.Style
+package org.hstefans.strap.app.style
 
 import tornadofx.Stylesheet
 

@@ -14,6 +14,7 @@ import org.hstefans.strap.app.controllers.TaskController
 import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import org.hstefans.strap.app.models.Report
 import org.hstefans.strap.app.models.Task
+import org.hstefans.strap.app.views.ReportUpdateView
 import org.hstefans.strap.app.views.TaskUpdateView
 import tornadofx.*
 import java.util.*
@@ -26,25 +27,17 @@ class TabFragment : Fragment("Tab View") {
     val taskTableData: ObservableList<Task> = FXCollections.observableArrayList()
     val reportTableData: ObservableList<Report> = FXCollections.observableArrayList()
 
-    private val taskcntrlr = TaskController()
-    private val reportcntrlr = ReportController()
+    private val taskController = TaskController()
+    private val reportController = ReportController()
 
 
-    //TODO remove this after testing
-    private val testTask = Task("testuid", "Do something somewhere", "root", "you know", "WIT", 0)
-    private val testReport = Report("testuid", "somewhere", "brokenstuff", "none", "sellotape", "root")
 
     override val root = vbox {
 
-
         reloadViewsOnFocus()
-        //TODO remove after testing
-        taskcntrlr.create(testTask)
-        reportcntrlr.create(testReport)
 
-        taskTableData.setAll(currentUser.username.let { taskcntrlr.filterTasksForUser(it) } as ObservableList<Task>?)
-        reportTableData.setAll(currentUser.username.let { reportcntrlr.filterReportsForUser(it) } as ObservableList<Report>?)
-
+        taskTableData.setAll(currentUser.username.let { taskController.filterTasksForUser(it) } as ObservableList<Task>?)
+        reportTableData.setAll(currentUser.username.let { reportController.filterReportsForUser(it) } as ObservableList<Report>?)
 
         tabpane {
             var taskTitleField: TextField by singleAssign()
@@ -102,14 +95,14 @@ class TabFragment : Fragment("Tab View") {
                                         "Could not create new task, some fields are empty, please fill them in"
                                     )
                                 } else {
-                                    taskcntrlr.create(newTask)
+                                    taskController.create(newTask)
                                     alert(
                                         Alert.AlertType.INFORMATION,
                                         "Task Created",
                                         "A new task has been created ${newTask.title}"
                                     )
                                     taskTableData.setAll(currentUser.username.let {
-                                        taskcntrlr.filterTasksForUser(
+                                        taskController.filterTasksForUser(
                                             it
                                         )
                                     } as ObservableList<Task>?)
@@ -126,7 +119,7 @@ class TabFragment : Fragment("Tab View") {
                             button("REFRESH").action {
                                 // force a refresh on the table
                                 taskTableData.setAll(currentUser.username.let {
-                                    taskcntrlr.filterTasksForUser(
+                                    taskController.filterTasksForUser(
                                         it
                                     )
                                 } as ObservableList<Task>?)
@@ -191,7 +184,7 @@ class TabFragment : Fragment("Tab View") {
                                                     doneFlag
                                                 )
 
-                                            taskcntrlr.update(newTask)
+                                            taskController.update(newTask)
 
                                             alert(
                                                 Alert.AlertType.INFORMATION,
@@ -199,11 +192,10 @@ class TabFragment : Fragment("Tab View") {
                                                 "Task status has been changed to $doneFlag"
                                             )
                                             taskTableData.setAll(currentUser.username.let {
-                                                taskcntrlr.filterTasksForUser(
+                                                taskController.filterTasksForUser(
                                                     it
                                                 )
                                             } as ObservableList<Task>?)
-
                                         }
                                     }
                                     item("remove") {
@@ -215,26 +207,22 @@ class TabFragment : Fragment("Tab View") {
                                                     "No task has been selected, please try again"
                                                 )
                                             } else if (selectedTask.uid != "" || selectedTask.assignee != "null") {
-                                                taskcntrlr.delete(selectedTask);
+                                                taskController.delete(selectedTask);
                                                 alert(
                                                     Alert.AlertType.INFORMATION,
                                                     "Task Deleted",
                                                     "Task ${selectedTask.title} has been deleted"
                                                 )
                                                 taskTableData.setAll(currentUser.username.let {
-                                                    taskcntrlr.filterTasksForUser(
+                                                    taskController.filterTasksForUser(
                                                         it
                                                     )
                                                 } as ObservableList<Task>?)
-
                                             }
-
                                         }
                                     }
                                 }
-
                             }
-
                         }
                     }
 
@@ -286,14 +274,14 @@ class TabFragment : Fragment("Tab View") {
                                                 "Could not create new task, some fields are empty, please fill them in"
                                             )
                                         } else {
-                                            reportcntrlr.create(newReport)
+                                            reportController.create(newReport)
                                             alert(
                                                 Alert.AlertType.INFORMATION,
                                                 "Task report",
                                                 "A new report has been created ${newReport.location}"
                                             )
                                             reportTableData.setAll(currentUser.username.let {
-                                                reportcntrlr.filterReportsForUser(
+                                                reportController.filterReportsForUser(
                                                     it
                                                 )
                                             } as ObservableList<Report>?)
@@ -331,8 +319,8 @@ class TabFragment : Fragment("Tab View") {
                                     contextmenu {
                                         item("update") {
                                             action {
-                                                if (selectedTask.uid != "") {
-                                                    replaceWith<TaskUpdateView>(
+                                                if (selectedReport.uid != "") {
+                                                    replaceWith<ReportUpdateView>(
                                                         ViewTransition.Slide(
                                                             0.3.seconds,
                                                             ViewTransition.Direction.LEFT
@@ -357,14 +345,14 @@ class TabFragment : Fragment("Tab View") {
                                                         "No report has been selected, please try again"
                                                     )
                                                 } else if (selectedReport.uid != "" || selectedReport.reportee != "null") {
-                                                    reportcntrlr.delete(selectedReport);
+                                                    reportController.delete(selectedReport);
                                                     alert(
                                                         Alert.AlertType.INFORMATION,
                                                         "Report Deleted",
                                                         "Report ${selectedReport.uid} has been deleted"
                                                     )
                                                     reportTableData.setAll(currentUser.username.let {
-                                                        reportcntrlr.filterReportsForUser(
+                                                        reportController.filterReportsForUser(
                                                             it
                                                         )
                                                     } as ObservableList<Report>?)
@@ -372,7 +360,6 @@ class TabFragment : Fragment("Tab View") {
                                             }
                                         }
                                     }
-
                                 }
                             }
                         }
