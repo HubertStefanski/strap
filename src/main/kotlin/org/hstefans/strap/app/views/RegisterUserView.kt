@@ -70,18 +70,26 @@ class RegisterUserView : View("Register User") {
                     val newUser =
                         User(null, usernameTextField.text, passwordTextField.text, phoneTextField.text.toLong())
 
-                    userController.addUser(newUser)
-                    alert(
-                        Alert.AlertType.INFORMATION,
-                        "user Registration successful",
-                        "User has been registered "
-                    )
+                   var err = userController.addUser(newUser)
+                    if (err != null) {
+                        alert(
+                            Alert.AlertType.INFORMATION,
+                            "user Registration successful",
+                            "User has been registered "
+                        )
 
-                    replaceWith<LoginView>(
-                        ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),
-                        true,
-                        true
-                    )
+                        replaceWith<LoginView>(
+                            ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),
+                            true,
+                            true
+                        )
+                    }else{
+                        alert(
+                            Alert.AlertType.ERROR,
+                            "user Registration failed",
+                            "User could not be registered, ensure that all fields are correct and that the username is unique "
+                        )
+                    }
                 }
             }
         }
