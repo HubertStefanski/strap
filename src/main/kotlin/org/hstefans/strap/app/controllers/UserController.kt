@@ -9,6 +9,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 import java.util.*
+import javax.security.sasl.AuthenticationException
 
 
 class UserController : Controller() {
@@ -30,11 +31,12 @@ class UserController : Controller() {
     //Authenticate user
     fun authUser(username: String, password: String): Boolean {
         val localPass = hashString(password)
-        val user = findUser(username)
-        return if (user != null) {
-            user.password == localPass
+        val localUser = findUser(username) ?: throw Exception("UserNotFound")
+        if (localUser.password != localPass) {
+            throw AuthenticationException("Could not authenticate the user")
         } else {
-            false
+            currentUser = localUser
+            return true
         }
     }
 
@@ -162,6 +164,7 @@ class UserController : Controller() {
             }
         }
     }
+
     fun deleteUser(user: User) {
         var conn: Connection? = null
         var stmt: Statement? = null

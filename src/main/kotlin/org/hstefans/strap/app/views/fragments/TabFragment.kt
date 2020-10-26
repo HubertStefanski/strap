@@ -81,9 +81,9 @@ class TabFragment : Fragment("Tab View") {
                         button("create new task") {
                             action {
                                 var newTask = Task(
-                                    UUID.randomUUID().toString(),
+                                   "",
                                     taskTitleField.text,
-                                    currentUser.username,
+                                    "",
                                     taskDescriptionField.text,
                                     taskLocationField.text,
                                     0

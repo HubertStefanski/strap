@@ -1,13 +1,16 @@
 package org.hstefans.strap.app.controllers
 
 import javafx.collections.ObservableList
+import org.hstefans.strap.app.controllers.UserController.Companion.currentUser
 import org.hstefans.strap.app.models.Task
 import tornadofx.Controller
 import tornadofx.observableList
+import java.lang.IllegalArgumentException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.util.*
 
 
 class TaskController : Controller() {
@@ -79,6 +82,18 @@ class TaskController : Controller() {
     public fun create(task: Task): String {
         var conn: Connection? = null
         var stmt: Statement? = null
+        if(task.uid != ""){
+            throw IllegalArgumentException("UID cannot be assigned by user")
+        }
+        task.uid = UUID.randomUUID().toString()
+
+        if(task.description == "" || task.location == "" || task.title == ""){
+            throw IllegalArgumentException("Some fields were left empty for $task")
+        }
+        if(task.assignee != ""){
+            throw IllegalArgumentException("Attempted assignment to non-current user")
+        }
+        task.assignee = currentUser.username
 
         try {
             conn = dbc.getConnection()
