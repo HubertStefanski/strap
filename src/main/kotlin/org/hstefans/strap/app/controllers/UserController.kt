@@ -23,8 +23,56 @@ class UserController : Controller() {
 
 
     internal fun findUser(thisUsername: String): User? {
+        val usrList: MutableList<User> = mutableListOf()
 
-        return this.getAllUsersFromDataStore()?.find { user -> user.username == thisUsername }
+        var conn: Connection? = null
+        var stmt: Statement? = null
+        var rs: ResultSet? = null
+
+        try {
+            conn = dbc.getConnection()
+            if (conn != null) {
+                stmt = conn.createStatement()
+            }
+            stmt!!.executeQuery("SELECT * FROM USER WHERE `USERNAME` = '${thisUsername}'")
+            rs = stmt.resultSet
+
+
+            if (rs != null) {
+                while (rs.next()) {
+                    var uid =
+                        UUID.fromString(rs.getString("UID")) //<- Circumvent non-assignment requirement in function
+                    var phone = rs.getString("PHONE").toLong() //
+                    usrList.add(User(uid, rs.getString("USERNAME"), rs.getString("PASSWORD"), phone))
+                }
+            }
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            // release resources
+            if (rs != null) {
+                try {
+                    rs.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+
+
+        return usrList.find { user -> user.username == thisUsername }
 
     }
 
@@ -94,14 +142,12 @@ class UserController : Controller() {
             rs = stmt.resultSet
 
 
-            var loopcntr = 1
             if (rs != null) {
                 while (rs.next()) {
                     var uid =
                         UUID.fromString(rs.getString("UID")) //<- Circumvent non-assignment requirement in function
                     var phone = rs.getString("PHONE").toLong() //
                     usrList.add(User(uid, rs.getString("USERNAME"), rs.getString("PASSWORD"), phone))
-                    loopcntr++
                 }
             }
         } catch (ex: SQLException) {
