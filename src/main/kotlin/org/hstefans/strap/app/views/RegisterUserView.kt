@@ -73,6 +73,14 @@ class RegisterUserView : View("Register User") {
                    var err = userController.addUser(newUser)
                     if (err != null) {
                         alert(
+                            Alert.AlertType.ERROR,
+                            "user Registration failed",
+                            "User could not be registered, ensure that all fields are correct and that the username is unique "
+                        )
+
+                    }else{
+
+                        alert(
                             Alert.AlertType.INFORMATION,
                             "user Registration successful",
                             "User has been registered "
@@ -82,12 +90,6 @@ class RegisterUserView : View("Register User") {
                             ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.RIGHT),
                             true,
                             true
-                        )
-                    }else{
-                        alert(
-                            Alert.AlertType.ERROR,
-                            "user Registration failed",
-                            "User could not be registered, ensure that all fields are correct and that the username is unique "
                         )
                     }
                 }
