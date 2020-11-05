@@ -55,7 +55,7 @@ class ReportUpdateView : View("Report Update") {
                 reportResolutionField = textfield()
             }
             button {
-                label("Update Task")
+                label("Update Report")
                 action {
                     val newReport =
                         Report(

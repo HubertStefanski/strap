@@ -33,7 +33,6 @@ class TaskController : Controller() {
             stmt!!.executeQuery("SELECT * FROM TASK WHERE `ASSIGNEE` = '${username}'")
             rs = stmt.resultSet
 
-            var loopcntr = 1
             if (rs != null) {
                 while (rs.next()) {
                     taskList.add(
@@ -46,7 +45,6 @@ class TaskController : Controller() {
                             rs.getInt("DONESTATUS")
                         )
                     )
-                    loopcntr++
                 }
             }
         } catch (ex: SQLException) {
