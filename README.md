@@ -1,4 +1,4 @@
-# Strap (S)hift (Tr)acking (Ap)p [WIP]
+# Strap (S)hift (Tr)acking (Ap)p
 
 A simple application written in kotlin, designed to be used by security guards.
 
